@@ -17,11 +17,7 @@ dpTableHtml += '</tr>';
 for (i = 0; i <= num; i++){
     for(j = 0; j <= limit; j++){
         if (j === 0) dpTableHtml += '<tr><td>' + i + '</td>';
-
-        if (! dp[i]) dp.push([]);
-        dp[i][j] = defaultVal;
         dpTableHtml += '<td>' + defaultVal + '</td>';
-
         if (j === limit) dpTableHtml += '</tr>';
     }
 }
@@ -29,6 +25,7 @@ dpTableHtml += '</table>';
 document.getElementById('dp').innerHTML = dpTableHtml;
     
 for (i = 0; i <= num; i++){
+    dp[i] = [];
     for(j = 0; j <= limit; j++){
         dp[i][j] = defaultVal;
     }
