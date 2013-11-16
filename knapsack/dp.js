@@ -38,22 +38,29 @@ var addTotalWDom = document.getElementById('add-total-w');
 var addVDom      = document.getElementById('add-v');
 var addWDom      = document.getElementById('add-w');
 var addNumDom    = document.getElementById('add-num');
-for (i = 0; i < num; i++){
-    for(j = 0; j<= limit; j++){
-        for(k = 0; k * goods[i].w <= j; k++){
 
-            var befV  = dp[i + 1][j];
-            var newV = dp[i][j - k * goods[i].w] + k * goods[i].v;
-            
-            befValDom.innerHTML    = befV;
-            newValDom.innerHTML    = newV;
-            addTotalVDom.innerHTML = k * goods[i].v;
-            addTotalWDom.innerHTML = k * goods[i].w;
-            addVDom.innerHTML      = goods[i].v;
-            addWDom.innerHTML      = goods[i].w;
-            addNumDom.innerHTML    = k;
+var loopNum = 1;
+var interval = 1500;
+for (i = 0; i < num; i++) {
+    for(j = 0; j <= limit; j++) {
+        for(k = 0; k * goods[i].w <= j; k++) {
+            setTimeout((function (i, j, k, loop) {
+                return function () {
+                    console.log('Loop[' + loop + ']i,j,k:' + i +',' + j + ',' + k);
+                    var befV = dp[i + 1][j];
+                    var newV = dp[i][j - k * goods[i].w] + k * goods[i].v;
 
-            dp[i + 1][j] = Math.max(befV, newV);
+                    befValDom.innerHTML    = befV;
+                    newValDom.innerHTML    = newV;
+                    addTotalVDom.innerHTML = k * goods[i].v;
+                    addTotalWDom.innerHTML = k * goods[i].w;
+                    addVDom.innerHTML      = goods[i].v;
+                    addWDom.innerHTML      = goods[i].w;
+                    addNumDom.innerHTML    = k;
+
+                    dp[i + 1][j] = Math.max(befV, newV);
+                };
+            })(i, j, k, loopNum), (loopNum++) * interval);
         }
     }
 }
