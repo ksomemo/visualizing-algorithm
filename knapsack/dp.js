@@ -30,10 +30,30 @@ for (i = 0; i <= num; i++){
         dp[i][j] = defaultVal;
     }
 }
+
+var befValDom    = document.getElementById('bef-val');
+var newValDom    = document.getElementById('new-val');
+var addTotalVDom = document.getElementById('add-total-v');
+var addTotalWDom = document.getElementById('add-total-w');
+var addVDom      = document.getElementById('add-v');
+var addWDom      = document.getElementById('add-w');
+var addNumDom    = document.getElementById('add-num');
 for (i = 0; i < num; i++){
     for(j = 0; j<= limit; j++){
         for(k = 0; k * goods[i].w <= j; k++){
-            dp[i + 1][j] = Math.max(dp[i + 1][j], dp[i][j - k * goods[i].w] + k * goods[i].v);
+
+            var befV  = dp[i + 1][j];
+            var newV = dp[i][j - k * goods[i].w] + k * goods[i].v;
+            
+            befValDom.innerHTML    = befV;
+            newValDom.innerHTML    = newV;
+            addTotalVDom.innerHTML = k * goods[i].v;
+            addTotalWDom.innerHTML = k * goods[i].w;
+            addVDom.innerHTML      = goods[i].v;
+            addWDom.innerHTML      = goods[i].w;
+            addNumDom.innerHTML    = k;
+
+            dp[i + 1][j] = Math.max(befV, newV);
         }
     }
 }
