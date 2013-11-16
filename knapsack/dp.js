@@ -8,6 +8,9 @@ var limit = 7;
 var dp = [];
 var i,j,k;
 var defaultVal = 0;
+var valIdName = function (i, j) {
+    return 'v-' + i + '-' + j;
+};
 
 var dpTableHtml = '<table id="dp-table" border="1"><tr><td>I＼J</td>';
 for (i = 0; i <= limit; i++){
@@ -17,7 +20,7 @@ dpTableHtml += '</tr>';
 for (i = 0; i <= num; i++){
     for(j = 0; j <= limit; j++){
         if (j === 0) dpTableHtml += '<tr><td>' + i + '</td>';
-        dpTableHtml += '<td>' + defaultVal + '</td>';
+        dpTableHtml += '<td id="' + valIdName(i, j) + '">' + defaultVal + '</td>';
         if (j === limit) dpTableHtml += '</tr>';
     }
 }
@@ -59,6 +62,8 @@ for (i = 0; i < num; i++) {
                     addNumDom.innerHTML    = k;
 
                     dp[i + 1][j] = Math.max(befV, newV);
+
+                    document.getElementById(valIdName(i + 1, j)).innerHTML = dp[i + 1][j];
                 };
             })(i, j, k, loopNum), (loopNum++) * interval);
         }
