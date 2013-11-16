@@ -11,8 +11,12 @@ var defaultVal = 0;
 var valIdName = function (i, j) {
     return 'v-' + i + '-' + j;
 };
+var goodsIdName = function (i) {
+    return 'goods-' + i;
+};
 
-var dpTableHtml = '<table id="dp-table" border="1"><tr><td>I＼J</td>';
+var explain = '入れる品物の<br>種類数＼重さ';
+var dpTableHtml = '<table id="dp-table" border="1"><tr><td>' + explain + '</td>';
 for (i = 0; i <= limit; i++){
     dpTableHtml += '<td>' + i + '</td>';
 }
@@ -26,7 +30,18 @@ for (i = 0; i <= num; i++){
 }
 dpTableHtml += '</table>';
 document.getElementById('dp').innerHTML = dpTableHtml;
-    
+
+var goodsTableBody = '';
+for (i = 0; i < num; i++){
+    goodsTableBody += '<tr id="' + goodsIdName(i) + '">';
+    goodsTableBody += '<td>' + (i + 1) + '</td>';
+    goodsTableBody += '<td>' + goods[i].v + '</td>';
+    goodsTableBody += '<td>' + goods[i].w + '</td>';
+    goodsTableBody += '</tr>';
+}
+document.querySelector('#goods tbody').innerHTML = goodsTableBody;
+
+
 for (i = 0; i <= num; i++){
     dp[i] = [];
     for(j = 0; j <= limit; j++){
@@ -36,17 +51,14 @@ for (i = 0; i <= num; i++){
 
 var befValDom    = document.getElementById('bef-val');
 var newValDom    = document.getElementById('new-val');
-var addTotalVDom = document.getElementById('add-total-v');
 var addTotalWDom = document.getElementById('add-total-w');
-var addVDom      = document.getElementById('add-v');
-var addWDom      = document.getElementById('add-w');
-var addNumDom    = document.getElementById('add-num');
 var defaultColor = 'white';
 var posDom       = null;
 var reusePosDom  = null;
+var befGoodsId   = -1;
 
 var loopNum = 1;
-var interval = 1500;
+var interval = 1000;
 for (i = 0; i < num; i++) {
     for(j = 0; j <= limit; j++) {
         for(k = 0; k * goods[i].w <= j; k++) {
@@ -54,13 +66,21 @@ for (i = 0; i < num; i++) {
                 return function () {
                     console.log('Loop[' + loop + ']i,j,k:' + i +',' + j + ',' + k);
 
+                    if (befGoodsId !== i) {
+                        var befGood = document.getElementById(goodsIdName(befGoodsId));
+                        if (befGood) befGood.style.backgroundColor = defaultColor;
+                        befGoodsId = i;
+                        document.getElementById(goodsIdName(i)).style.backgroundColor = 'yellow';
+                    }
+
                     if (posDom)     posDom.style.backgroundColor      = defaultColor;
                     if (reusePosDom)reusePosDom.style.backgroundColor = defaultColor;
 
-                    var befPos   = i + 1;
-                    var reusePos = j - k * goods[i].w;
-                    var befV = dp[befPos][j];
-                    var newV = dp[i][reusePos] + k * goods[i].v;
+                    var befPos    = i + 1;
+                    var reusePos  = j - k * goods[i].w;
+                    var reuseV    = dp[i][reusePos];
+                    var befV      = dp[befPos][j];
+                    var newV      = reuseV + k * goods[i].v;
 
                     posDom      = document.getElementById(valIdName(befPos, j));
                     reusePosDom = document.getElementById(valIdName(i, reusePos));
@@ -68,12 +88,8 @@ for (i = 0; i < num; i++) {
                     reusePosDom.style.backgroundColor = 'skyblue';
 
                     befValDom.innerHTML    = befV;
-                    newValDom.innerHTML    = newV;
-                    addTotalVDom.innerHTML = k * goods[i].v;
-                    addTotalWDom.innerHTML = k * goods[i].w;
-                    addVDom.innerHTML      = goods[i].v;
-                    addWDom.innerHTML      = goods[i].w;
-                    addNumDom.innerHTML    = k;
+                    newValDom.innerHTML    = newV + '(' + reuseV + ' + '+ k + ' * ' + goods[i].v + ')';
+                    addTotalWDom.innerHTML = k * goods[i].w + '(' + k + ' * ' + goods[i].w + ')';
 
                     dp[befPos][j] = Math.max(befV, newV);
 
@@ -84,4 +100,3 @@ for (i = 0; i < num; i++) {
     }
 }
 
-console.log(dp[num][limit]);
