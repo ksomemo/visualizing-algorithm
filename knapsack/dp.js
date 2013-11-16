@@ -41,6 +41,9 @@ var addTotalWDom = document.getElementById('add-total-w');
 var addVDom      = document.getElementById('add-v');
 var addWDom      = document.getElementById('add-w');
 var addNumDom    = document.getElementById('add-num');
+var defaultColor = 'white';
+var posDom       = null;
+var reusePosDom  = null;
 
 var loopNum = 1;
 var interval = 1500;
@@ -50,8 +53,19 @@ for (i = 0; i < num; i++) {
             setTimeout((function (i, j, k, loop) {
                 return function () {
                     console.log('Loop[' + loop + ']i,j,k:' + i +',' + j + ',' + k);
-                    var befV = dp[i + 1][j];
-                    var newV = dp[i][j - k * goods[i].w] + k * goods[i].v;
+
+                    if (posDom)     posDom.style.backgroundColor      = defaultColor;
+                    if (reusePosDom)reusePosDom.style.backgroundColor = defaultColor;
+
+                    var befPos   = i + 1;
+                    var reusePos = j - k * goods[i].w;
+                    var befV = dp[befPos][j];
+                    var newV = dp[i][reusePos] + k * goods[i].v;
+
+                    posDom      = document.getElementById(valIdName(befPos, j));
+                    reusePosDom = document.getElementById(valIdName(i, reusePos));
+                    posDom.style.backgroundColor      = 'pink';
+                    reusePosDom.style.backgroundColor = 'skyblue';
 
                     befValDom.innerHTML    = befV;
                     newValDom.innerHTML    = newV;
@@ -61,9 +75,9 @@ for (i = 0; i < num; i++) {
                     addWDom.innerHTML      = goods[i].w;
                     addNumDom.innerHTML    = k;
 
-                    dp[i + 1][j] = Math.max(befV, newV);
+                    dp[befPos][j] = Math.max(befV, newV);
 
-                    document.getElementById(valIdName(i + 1, j)).innerHTML = dp[i + 1][j];
+                    document.getElementById(valIdName(befPos, j)).innerHTML = dp[i + 1][j];
                 };
             })(i, j, k, loopNum), (loopNum++) * interval);
         }
