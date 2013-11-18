@@ -60,7 +60,52 @@ var befGoodsId   = -1;
 var loopNum = 1;
 var interval = 1000;
 for (i = 0; i < num; i++) {
-    for(j = 0; j <= limit; j++) {
+    for (j = 0; j <= limit; j++) {
+        setTimeout((function (i, j, loop) {
+            return function () {
+                console.log('Loop[' + loop + ']i,j:' + i +',' + j);
+
+                if (befGoodsId !== i) {
+                    var befGood = document.getElementById(goodsIdName(befGoodsId));
+                    if (befGood) befGood.style.backgroundColor = defaultColor;
+                    befGoodsId = i;
+                    document.getElementById(goodsIdName(i)).style.backgroundColor = 'yellow';
+                }
+
+                if (posDom)     posDom.style.backgroundColor      = defaultColor;
+                if (reusePosDom)reusePosDom.style.backgroundColor = defaultColor;
+
+                var nowPos    = i + 1;
+                var reusePos  = j - goods[i].w;
+                var reusable  = reusePos >= 0;
+                var befV      = dp[i][j];
+                var reuseV    = replasable ? dp[i + 1][reusePos] : befV;
+                var newV      = replasable ? reuseV + goods[i].v : befV;
+
+                posDom = document.getElementById(valIdName(nowPos, j));
+                posDom.style.backgroundColor      = 'pink';
+                if (replasable) {
+                    reusePosDom = document.getElementById(valIdName(i + 1, reusePos));
+                    reusePosDom.style.backgroundColor = 'skyblue';
+                } else {
+                    reusePosDom = document.getElementById(valIdName(i, j));
+                    reusePosDom.style.backgroundColor = 'gray';
+                }
+
+                befValDom.innerHTML    = befV;
+                newValDom.innerHTML    = !replasable ? '入れ替えられない' : newV + '(' + reuseV + ' + '+ goods[i].v + ')';
+                addTotalWDom.innerHTML = !replasable ? '入れ替えられない' : goods[i].w : ;
+
+                if (replasable) {
+                    dp[nowPos][j] = Math.max(befV, newV);
+                } else {
+                    dp[nowPos][j] = dp[i][j];
+                }
+
+                document.getElementById(valIdName(nowPos, j)).innerHTML = dp[nowPos][j];
+            };
+        }(i, j, loopNum)), (loopNum++) * interval);
+/*
         for(k = 0; k * goods[i].w <= j; k++) {
             setTimeout((function (i, j, k, loop) {
                 return function () {
@@ -97,6 +142,7 @@ for (i = 0; i < num; i++) {
                 };
             })(i, j, k, loopNum), (loopNum++) * interval);
         }
+*/
     }
 }
 
